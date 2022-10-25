@@ -16,7 +16,21 @@ public class SimpleOrderRepository implements OrderRepository {
 
     @Override
     public void insert(Order order) {
+        if (ordersMap.containsKey(order.getReference())) {
+            throw new DuplicateOrderReferenceException();
+        }
         ordersMap.put(order.getReference(), order);
+    }
+
+    @Override
+    public Order getByReference(String orderReference) {
+        Order order = this.ordersMap.get(orderReference);
+        return order;
+    }
+
+    @Override
+    public Order update(Order orderUpdate) {
+        return ordersMap.put(orderUpdate.getReference(), orderUpdate);
     }
 
 }

@@ -1,8 +1,7 @@
 package com.blockstock.blockstockapi.order;
 
-import java.security.SecureRandom;
-import java.util.Base64;
-
+import org.apache.commons.text.CharacterPredicates;
+import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,9 +15,9 @@ public class OrderService {
     }
 
     private String generateReference() {
-        SecureRandom rand = new SecureRandom();
-        byte[] randomBytes = new byte[16];
-        rand.nextBytes(randomBytes);
-        return new String(Base64.getEncoder().encode(randomBytes));
+        return new RandomStringGenerator.Builder()
+                .withinRange('0', 'z')
+                .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
+                .build().generate(8);
     }
 }
