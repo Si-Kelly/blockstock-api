@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.text.CharacterPredicates;
+import org.apache.commons.text.RandomStringGenerator;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -12,15 +14,18 @@ public class SimpleOrderRepository implements OrderRepository {
 
     private final Map<String, Order> ordersMap;
 
+    private RandomStringGenerator referenceGenerator = new RandomStringGenerator.Builder()
+            .withinRange('0', 'z')
+            .filteredBy(CharacterPredicates.LETTERS, CharacterPredicates.DIGITS)
+            .build();
+
     public SimpleOrderRepository() {
         this.ordersMap = new LinkedHashMap<String, Order>();
     }
 
     @Override
     public void insert(Order order) {
-        if (ordersMap.containsKey(order.getReference())) {
-            throw new DuplicateOrderReferenceException();
-        }
+        order.setReference(referenceGenerator.generate(8));
         ordersMap.put(order.getReference(), order);
     }
 

@@ -1,7 +1,6 @@
 package com.blockstock.blockstockapi.order;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,12 +22,10 @@ public class OrderController {
     @Autowired
     OrderRepository repo;
 
-    @Autowired
-    OrderService service;
-
     @PostMapping(path = "orders")
     public CreateOrderResponse placeOrder(@RequestBody CreateOrderRequest request) {
-        Order order = service.create(request.quantity);
+        Order order = new Order();
+        order.setQuantity(request.quantity);
         repo.insert(order);
         return new CreateOrderResponse(order.getReference());
     }
