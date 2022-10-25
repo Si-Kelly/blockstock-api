@@ -1,6 +1,8 @@
 package com.blockstock.blockstockapi.order;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Repository;
@@ -31,6 +33,11 @@ public class SimpleOrderRepository implements OrderRepository {
     @Override
     public Order update(Order orderUpdate) {
         return ordersMap.put(orderUpdate.getReference(), orderUpdate);
+    }
+
+    @Override
+    public List<Order> getAll() {
+        return new ArrayList<Order>(ordersMap.values());
     }
 
 }

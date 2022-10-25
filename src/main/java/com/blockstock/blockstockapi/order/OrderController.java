@@ -1,5 +1,8 @@
 package com.blockstock.blockstockapi.order;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.blockstock.blockstockapi.order.models.CreateOrderRequest;
 import com.blockstock.blockstockapi.order.models.CreateOrderResponse;
+import com.blockstock.blockstockapi.order.models.OrderListResponse;
 import com.blockstock.blockstockapi.order.models.OrderResponseModel;
 import com.blockstock.blockstockapi.order.models.UpdateOrderRequest;
 
@@ -27,6 +31,12 @@ public class OrderController {
         Order order = service.create(request.quantity);
         repo.insert(order);
         return new CreateOrderResponse(order.getReference());
+    }
+
+    @GetMapping(path = "orders/")
+    public OrderListResponse listOrders() {
+        List<Order> allOrders = repo.getAll();
+        return new OrderListResponse(allOrders);
     }
 
     @GetMapping(path = "orders/{orderReference}")

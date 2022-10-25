@@ -1,9 +1,11 @@
 package com.blockstock.blockstockapi;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.UnsupportedEncodingException;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -50,6 +52,31 @@ class BlockstockApiApplicationTests {
 		postOrder(2)
 				.andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+	}
+
+	@Test
+	void canListAllOrders() throws Exception {
+
+		JSONObject result = toJSONObject(mvc
+				.perform(MockMvcRequestBuilders.get("/orders/").contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andExpect(JsonUnitResultMatchers.json().node("orders").isArray())
+				.andReturn());
+
+		JSONArray orders = result.getJSONArray("orders");
+		int count = orders.length();
+
+		postOrder(5);
+		postOrder(17);
+		postOrder(14);
+
+		orders = toJSONObject(mvc
+				.perform(MockMvcRequestBuilders.get("/orders/").contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+				.andReturn()).getJSONArray("orders");
+
+		assertEquals(orders.length(), count + 3);
+
 	}
 
 	@Test
